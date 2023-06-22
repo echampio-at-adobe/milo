@@ -978,3 +978,7 @@ div[data-valign="middle"] {
     max-width: var(--grid-container-width);
   }
 }
+
+.section.quiz-blocks {
+  display: none;
+}

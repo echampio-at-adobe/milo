@@ -139,6 +139,20 @@ const App = () => {
 
   const minSelections = +selectedQuestion['min-selections'];
   const maxSelections = +selectedQuestion['max-selections'];
+  
+  
+  const className = selectedQuestion['show-sections'];
+  console.log(className);
+  const quizBlocks = document.querySelectorAll('.quiz-block');
+  quizBlocks.forEach((block) => {
+    if (className && block.classList.contains(className)) {
+      block.style.display = 'block';
+    }
+    else {
+      block.style.display = 'none';
+    }
+  });
+
 
   return html`<div class="quiz-container">
                   <${StepIndicator} 
