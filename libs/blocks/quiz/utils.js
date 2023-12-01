@@ -469,18 +469,27 @@ function iterateResultFragments(resultFragments) {
 async function checkUrlStatus(url, key, value) {
   try {
     const response = await fetch(url, { method: "HEAD" });
-    if (response.ok && url.indexOf('hlx.page') != -1) {
-      console.error(`Product: ${value.product}`);
-      console.error(`Key: ${key}`);
-      console.error(`Preview URL: ${url}`);
+    if (response.ok) {
+      if (url.indexOf('hlx.page') != -1) {
+        console.error(`Product: ${value.product}`);
+        console.error(`Key: ${key}`);
+        console.error(`Preview URL: ${url}`);
+      }
+      else {
+        console.info(`Product: ${value.product}`);
+        console.info(`Key: ${key}`);
+        console.info(`URL: ${url}`);
+      }  
     }
-    if (!response.ok) {
+    else {
       console.error(`Product: ${value.product}`);
       console.error(`Key: ${key}`);
       console.error(`Unpublished URL: ${url}`);
     }
   } catch (error) {
-    console.error(`Error checking URL status for ${url}: ${error}`);
+    console.error(`Product: ${value.product}`);
+    console.error(`Key: ${key}`);
+    console.error(`Unpublished URL: ${url}: ${error}`);
   }
 }
 
