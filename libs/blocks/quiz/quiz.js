@@ -329,4 +329,73 @@ export default async function init(
     preQuestions=${preQuestions} 
     initialStrings=${initialStrings} 
   />`, el);
+  // validate result-fragments from quiz data
+  if (document.location.search.indexOf('debug-results')) fetchDataAndCheckUrls();
 }
+
+// Function to fetch results.json
+async function fetchResultsJson() {
+  try {
+    const response = await fetch('results.json');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch results.json: ${response.status} ${response.statusText}`);
+    }
+
+    const jsonData = await response.json();
+    return jsonData;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+// convert JSON data to an object
+function convertJsonToObject(jsonData) {
+  if (jsonData) {
+    return jsonData['result-fragments'];
+  }
+  return null;
+}
+
+// iterate through result-fragments object
+function iterateResultFragments(resultFragments) {
+  if (resultFragments && resultFragments.data) {
+    resultFragments.data.forEach(fragment => {
+      for (const key in fragment) {
+        if (typeof fragment[key] === 'string' && fragment[key].startsWith('http')) {
+          // Check if the URL returns a 200 status code
+          checkUrlStatus(fragment[key], key, fragment);
+        }
+      }
+    });
+  }
+}
+
+// check URL status and print details if not 200
+async function checkUrlStatus(url, key, value) {
+  try {
+    const response = await fetch(url);
+    if (response.ok && url.indexOf('hlx.page') != -1) {
+      console.error(`Product: ${value.product}`);
+      console.error(`Key: ${key}`);
+      console.error(`Preview URL: ${url}`);
+    }
+    if (!response.ok) {
+      console.error(`Product: ${value.product}`);
+      console.error(`Key: ${key}`);
+      console.error(`Unpublished URL: ${url}`);
+    }
+  } catch (error) {
+    console.error(`Error checking URL status for ${url}: ${error}`);
+  }
+}
+
+async function fetchDataAndCheckUrls() {
+  const resultsJson = await fetchResultsJson();
+  const resultFragments = convertJsonToObject(resultsJson);
+  
+  if (resultFragments) {
+    iterateResultFragments(resultFragments);
+  }
+}
+
