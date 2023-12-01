@@ -471,25 +471,20 @@ async function checkUrlStatus(url, key, value) {
     const response = await fetch(url, { method: "HEAD" });
     if (response.ok) {
       if (url.indexOf('hlx.page') != -1) {
-        console.error(`Product: ${value.product}`);
-        console.error(`Key: ${key}`);
-        console.error(`Preview URL: ${url}`);
-      }
-      else {
         console.info(`Product: ${value.product}`);
         console.info(`Key: ${key}`);
-        console.info(`URL: ${url}`);
-      }  
+        console.info(`Preview URL: ${url}`);
+      }
     }
     else {
-      console.error(`Product: ${value.product}`);
-      console.error(`Key: ${key}`);
-      console.error(`Unpublished URL: ${url}`);
+      console.warn(`Product: ${value.product}`);
+      console.warn(`Key: ${key}`);
+      console.warn(`Unpublished URL: ${url}`);
     }
   } catch (error) {
-    console.error(`Product: ${value.product}`);
-    console.error(`Key: ${key}`);
-    console.error(`Unpublished URL: ${url}: ${error}`);
+    console.warn(`Product: ${value.product}`);
+    console.warn(`Key: ${key}`);
+    console.warn(`Unpublished URL: ${url}: ${error}`);
   }
 }
 
