@@ -468,7 +468,7 @@ function iterateResultFragments(resultFragments) {
 // check URL status and print details if not 200
 async function checkUrlStatus(url, key, value) {
   try {
-    if (url.startsWith('/') {
+    if (url.startsWith('/')) {
       url = `${document.location.origin}${url}`;
     }
     const response = await fetch(url, { method: "HEAD" });
