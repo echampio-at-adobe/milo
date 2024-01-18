@@ -456,7 +456,7 @@ function iterateResultFragments(resultFragments) {
   if (resultFragments && resultFragments.data) {
     resultFragments.data.forEach(fragment => {
       for (const key in fragment) {
-        if (typeof fragment[key] === 'string' && fragment[key].startsWith('http')) {
+        if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
           // Check if the URL returns a 200 status code
           checkUrlStatus(fragment[key], key, fragment);
         }
