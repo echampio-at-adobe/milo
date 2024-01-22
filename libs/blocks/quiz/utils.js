@@ -545,7 +545,12 @@ async function checkUrlStatus(url, key, value) {
 export async function fetchDataAndCheckUrls() {
   const results = await fetchContentOfFile(RESULTS_EP_NAME);
   if (results) {
+    console.info('Starting to loop through results fragments');
     iterateResultFragments(results['result-fragments']);
+    console.info('Finished looping through results fragments');
+  }
+  else {
+      console.error('Error: No fragments found in the results workbook');
   }
 }
 
