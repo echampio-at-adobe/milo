@@ -454,27 +454,28 @@ async function fetchResultsJson() {
 // iterate through resultFragments object
 async function iterateResultFragments(resultFragments) {
   if (resultFragments && resultFragments.data) {
-    for (const fragment of resultFragments.data) {
-      for (const key in fragment) {
-        if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
-          // Clear the cache for stage and main cc
-          const stageUrl = 'https://admin.hlx.page/cache/adobecom/cc/stage';
-          await clearCache(fragment[key], key, fragment, stageUrl);
-
-          const mainUrl = 'https://admin.hlx.page/cache/adobecom/cc/main';
-          await clearCache(fragment[key], key, fragment, mainUrl);
+    if (document.location.search.indexOf('debug-cache') > 0) {
+      for (const fragment of resultFragments.data) {
+        for (const key in fragment) {
+          if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
+            // Clear the cache for stage and main cc
+            const stageUrl = 'https://admin.hlx.page/cache/adobecom/cc/stage';
+            await clearCache(fragment[key], key, fragment, stageUrl);
+  
+            const mainUrl = 'https://admin.hlx.page/cache/adobecom/cc/main';
+            await clearCache(fragment[key], key, fragment, mainUrl);
+          }
         }
       }
     }
-
-    const timeoutPromise = new Promise(resolve => setTimeout(resolve, 10000));
-    await timeoutPromise;
-
-    for (const fragment of resultFragments.data) {
-      for (const key in fragment) {
-        if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
-          // Check if the URL returns a 200 status code
-          await checkUrlStatus(fragment[key], key, fragment);
+    
+    if (document.location.search.indexOf('debug-result-fragments') > 0) {  
+      for (const fragment of resultFragments.data) {
+        for (const key in fragment) {
+          if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
+            // Check if the URL returns a 200 status code
+            await checkUrlStatus(fragment[key], key, fragment);
+          }
         }
       }
     }

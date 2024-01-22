@@ -330,5 +330,7 @@ export default async function init(
     initialStrings=${initialStrings} 
   />`, el);
   // validate result-fragments from quiz data
-  if (document.location.search.indexOf('debug-result-fragments') > 0) fetchDataAndCheckUrls();
+  if (document.location.search.indexOf('debug-result-fragments') > 0) ||
+    document.location.search.indexOf('debug-cache') > 0)
+    fetchDataAndCheckUrls();
 }
