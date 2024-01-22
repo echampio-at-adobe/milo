@@ -487,7 +487,6 @@ async function clearCache(url, key, value, baseUrl) {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/x-www-form-urlencoded',
-                  'credentials': "same-origin",
                   // Add any additional headers as needed
               },
               // Add any request body data if required
