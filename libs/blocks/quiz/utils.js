@@ -465,14 +465,16 @@ function iterateResultFragments(resultFragments) {
         }
       }
     });
-    resultFragments.data.forEach(fragment => {
-      for (const key in fragment) {
-        if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
-          // Check if the URL returns a 200 status code
-          checkUrlStatus(fragment[key], key, fragment);
+    const myTimeout = setTimeout(
+      resultFragments.data.forEach(fragment => {
+        for (const key in fragment) {
+          if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
+            // Check if the URL returns a 200 status code
+            checkUrlStatus(fragment[key], key, fragment);
+          }
         }
       }
-    });
+    ), 5000);
   }
 }
 
