@@ -457,11 +457,56 @@ function iterateResultFragments(resultFragments) {
     resultFragments.data.forEach(fragment => {
       for (const key in fragment) {
         if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
+          // Clear the cache for stage and main cc
+          const stageUrl = 'https://admin.hlx.page/cache/adobecom/cc/stage';
+          clearCache(fragment[key], key, fragment, stageUrl);
+          const mainUrl = 'https://admin.hlx.page/cache/adobecom/cc/main';
+          clearCache(fragment[key], key, fragment, mainUrl);
+        }
+      }
+    resultFragments.data.forEach(fragment => {
+      for (const key in fragment) {
+        if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
           // Check if the URL returns a 200 status code
           checkUrlStatus(fragment[key], key, fragment);
         }
       }
     });
+  }
+}
+
+// clear the stage and main cc caches and print details if not 200
+async function clearCache(url, key, value, baseUrl) {
+  try {
+    if (url.startsWith('/')) {
+      url = `${document.location.origin}${url}`;
+      const apiUrl = `${baseUrl}${path}`;
+  
+      try {
+          const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  // Add any additional headers as needed
+              },
+              // Add any request body data if required
+              body: JSON.stringify({}),
+          });
+  
+          if (response.ok) {
+              console.log(`Cache cleared. POST request to ${apiUrl} successful`);
+              // You can process the response data here if needed
+          } else {
+              console.error(`Cache NOT cleared. POST request to ${apiUrl} failed. Status: ${response.status}`);
+          }
+      } catch (error) {
+          console.error(`Cache NOT cleared. Error during POST request to ${apiUrl}:`, error);
+      }
+
+
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
 
