@@ -455,31 +455,37 @@ async function fetchResultsJson() {
 async function iterateResultFragments(resultFragments) {
   if (resultFragments && resultFragments.data) {
     console.info('Starting to loop through results fragments');
+
     if (document.location.search.indexOf('debug-cache') > 0) {
-      for (const fragment of resultFragments.data) {
+      // Clear the cache for stage and main cc
+      const stageUrl = 'https://admin.hlx.page/cache/adobecom/cc/stage';
+      const mainUrl = 'https://admin.hlx.page/cache/adobecom/cc/main';
+
+      const clearCachePromises = resultFragments.data.map(async (fragment) => {
         for (const key in fragment) {
           if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
-            // Clear the cache for stage and main cc
-            const stageUrl = 'https://admin.hlx.page/cache/adobecom/cc/stage';
             await clearCache(fragment[key], key, fragment, stageUrl);
-  
-            const mainUrl = 'https://admin.hlx.page/cache/adobecom/cc/main';
             await clearCache(fragment[key], key, fragment, mainUrl);
           }
         }
-      }
+      });
+
+      await Promise.all(clearCachePromises);
     }
-    
-    if (document.location.search.indexOf('debug-result-fragments') > 0) {  
-      for (const fragment of resultFragments.data) {
+
+    if (document.location.search.indexOf('debug-result-fragments') > 0) {
+      // Check if the URL returns a 200 status code
+      const checkUrlStatusPromises = resultFragments.data.map(async (fragment) => {
         for (const key in fragment) {
           if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
-            // Check if the URL returns a 200 status code
             await checkUrlStatus(fragment[key], key, fragment);
           }
         }
-      }
+      });
+
+      await Promise.all(checkUrlStatusPromises);
     }
+
     console.info('Finished looping through results fragments');
   }
 }
