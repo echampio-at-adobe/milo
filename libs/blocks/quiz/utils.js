@@ -454,6 +454,7 @@ async function fetchResultsJson() {
 // iterate through resultFragments object
 async function iterateResultFragments(resultFragments) {
   if (resultFragments && resultFragments.data) {
+    console.info('Starting to loop through results fragments');
     if (document.location.search.indexOf('debug-cache') > 0) {
       for (const fragment of resultFragments.data) {
         for (const key in fragment) {
@@ -479,6 +480,7 @@ async function iterateResultFragments(resultFragments) {
         }
       }
     }
+    console.info('Finished looping through results fragments');
   }
 }
 
@@ -545,9 +547,7 @@ async function checkUrlStatus(url, key, value) {
 export async function fetchDataAndCheckUrls() {
   const results = await fetchContentOfFile(RESULTS_EP_NAME);
   if (results) {
-    console.info('Starting to loop through results fragments');
     iterateResultFragments(results['result-fragments']);
-    console.info('Finished looping through results fragments');
   }
   else {
       console.error('Error: No fragments found in the results workbook');
