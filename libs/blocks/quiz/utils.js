@@ -464,6 +464,7 @@ function iterateResultFragments(resultFragments) {
           clearCache(fragment[key], key, fragment, mainUrl);
         }
       }
+    });
     resultFragments.data.forEach(fragment => {
       for (const key in fragment) {
         if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
