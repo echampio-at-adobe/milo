@@ -452,16 +452,16 @@ async function fetchResultsJson() {
 }
 
 // iterate through result-fragments object
-async function iterateResultFragments(resultFragments) {
+function iterateResultFragments(resultFragments) {
   if (resultFragments && resultFragments.data) {
     resultFragments.data.forEach(fragment => {
       for (const key in fragment) {
         if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
           // Clear the cache for stage and main cc
           const stageUrl = 'https://admin.hlx.page/cache/adobecom/cc/stage';
-          await clearCache(fragment[key], key, fragment, stageUrl);
+          clearCache(fragment[key], key, fragment, stageUrl);
           const mainUrl = 'https://admin.hlx.page/cache/adobecom/cc/main';
-          await clearCache(fragment[key], key, fragment, mainUrl);
+          clearCache(fragment[key], key, fragment, mainUrl);
         }
       }
     });
@@ -470,7 +470,7 @@ async function iterateResultFragments(resultFragments) {
         for (const key in fragment) {
           if (typeof fragment[key] === 'string' && (fragment[key].startsWith('http') || fragment[key].startsWith('/'))) {
             // Check if the URL returns a 200 status code
-            await checkUrlStatus(fragment[key], key, fragment);
+            checkUrlStatus(fragment[key], key, fragment);
           }
         }
       }
