@@ -474,7 +474,7 @@ function iterateResultFragments(resultFragments) {
           }
         }
       }
-    ), 5000);
+    ), 10000);
   }
 }
 
