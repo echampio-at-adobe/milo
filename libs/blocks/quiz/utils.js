@@ -480,8 +480,7 @@ function iterateResultFragments(resultFragments) {
 async function clearCache(url, key, value, baseUrl) {
   try {
     if (url.startsWith('/')) {
-      url = `${document.location.origin}${url}`;
-      const apiUrl = `${baseUrl}${path}`;
+      const apiUrl = `${baseUrl}${url}`;
   
       try {
           const response = await fetch(apiUrl, {
