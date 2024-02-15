@@ -2,8 +2,6 @@
 import { getMetadata } from '../section-metadata/section-metadata.js';
 import { getConfig } from '../../utils/utils.js';
 
-const QUESTIONS_EP_NAME = 'questions.json';
-const STRINGS_EP_NAME = 'strings.json';
 const RESULTS_EP_NAME = 'results.json';
 const VALID_URL_RE = /^(http(s):\/\/.)[-a-z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-z0-9@:%_+.~#?&//=]*)/;
 
