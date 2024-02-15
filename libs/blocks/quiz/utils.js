@@ -37,14 +37,31 @@ export const initConfigPathGlob = (rootElement) => {
 };
 
 export const getQuizData = async () => {
-  try {
-    const [questions, dataStrings] = await Promise.all(
-      [fetchContentOfFile(QUESTIONS_EP_NAME), fetchContentOfFile(STRINGS_EP_NAME)],
-    );
-    return [questions, dataStrings];
-  } catch (ex) {
+  const { base } = getConfig();
+  console.log("base: " + base);
+  // Create a new web worker
+  const worker = new Worker(base + '/blocks/quiz/worker.js');
+  const questionsUrl= configPath(QUESTIONS_EP_NAME);
+  const dataStringsUrl = configPath(STRINGS_EP_NAME);
+
+  // Fetch quiz data
+  // Pass configPath(QUESTIONS_EP_NAME) and  configPath(STRINGS_EP_NAME) to the worker
+
+  worker.postMessage({questionsUrl, dataStringsUrl});
+
+  // Listen for messages from the worker
+  worker.onmessage = function(event) {
+    // Handle messages received from the worker
+    console.log('Received from worker:', event.data);
+    return [event.data.questions, event.data.dataStrings];
+  };
+
+  // Handle errors from the worker
+  worker.onerror = function(error) {
+    console.error('Error from worker:', error);
     window.lana?.log(`ERROR: Fetching data for quiz flow ${ex}`);
-  }
+  };
+
   return [];
 };
 
