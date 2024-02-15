@@ -36,35 +36,6 @@ export const initConfigPathGlob = (rootElement) => {
   return { configPath, quizKey, analyticsType, analyticsQuiz, shortQuiz };
 };
 
-export const getQuizData = async () => {
-  const { base } = getConfig();
-  console.log("base: " + base);
-  // Create a new web worker
-  const worker = new Worker(base + '/blocks/quiz/worker.js');
-  const questionsUrl= configPath(QUESTIONS_EP_NAME);
-  const dataStringsUrl = configPath(STRINGS_EP_NAME);
-
-  // Fetch quiz data
-  // Pass configPath(QUESTIONS_EP_NAME) and  configPath(STRINGS_EP_NAME) to the worker
-
-  worker.postMessage({questionsUrl, dataStringsUrl});
-
-  // Listen for messages from the worker
-  worker.onmessage = function(event) {
-    // Handle messages received from the worker
-    console.log('Received from worker:', event.data);
-    return [event.data.questions, event.data.dataStrings];
-  };
-
-  // Handle errors from the worker
-  worker.onerror = function(error) {
-    console.error('Error from worker:', error);
-    window.lana?.log(`ERROR: Fetching data for quiz flow ${ex}`);
-  };
-
-  return [];
-};
-
 export const getUrlParams = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const params = {};

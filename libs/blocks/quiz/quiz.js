@@ -5,10 +5,11 @@ import { createTag } from '../../utils/utils.js';
 import { GetQuizOption } from './quizoption.js';
 import { DecorateBlockBackground, DecorateBlockForeground } from './quizcontainer.js';
 import {
-  initConfigPathGlob, handleResultFlow, handleNext, transformToFlowData, getQuizData,
+  initConfigPathGlob, handleResultFlow, handleNext, transformToFlowData,
   getAnalyticsDataForBtn, getUrlParams, isValidUrl,
 } from './utils.js';
 import StepIndicator from './stepIndicator.js';
+import { getConfig } from '../../utils/utils.js';
 
 export async function loadFragments(fragmentURL) {
   const quizSections = document.querySelector('.quiz-footer');
@@ -41,32 +42,6 @@ const App = ({
   const [userFlow, setUserFlow] = useState([]);
   const validQuestions = useMemo(() => [], []);
   const [debugBuild, setDebugBuild] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      const [questions, dataStrings] = await getQuizData();
-      const qMap = {};
-      questions.questions.data.forEach((question) => {
-        qMap[question.questions] = question;
-        validQuestions.push(question.questions);
-      });
-
-      const strMap = {};
-      dataStrings.questions.data.forEach((question) => {
-        strMap[question.q] = question;
-      });
-
-      setUserFlow([questions.questions.data[0].questions]);
-
-      setStringData(dataStrings);
-      setQuestionData(questions);
-      setStringQList(strMap);
-      setQuestionList(qMap);
-      setDataLoaded(true);
-      document.body.classList.add('quiz-page');
-    })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setQuestionData, setStringData, setStringQList, setQuestionList]);
 
   useEffect(() => {
     const quizDebugValue = initialUrlParams['debug-results'];
@@ -332,13 +307,58 @@ export default async function init(
 ) {
   const configData = initConfigPathGlob(el);
   const updatedShortQuiz = shortQuiz || configData.shortQuiz;
-  el.replaceChildren();
-  render(html`<${App} 
-    initialIsDataLoaded=${initialIsDataLoaded} 
-    preQuestions=${preQuestions} 
-    initialStrings=${initialStrings}
-    shortQuiz=${updatedShortQuiz}
-    preselections=${preselections}
-    nextQuizViewsExist=${nextQuizViewsExist}
-  />`, el);
+
+  const { base } = getConfig();
+  console.log("base: " + base);
+  // Create a new web worker
+  const worker = new Worker(base + '/blocks/quiz/worker.js');
+  const questionsUrl= configData.configPath(QUESTIONS_EP_NAME);
+  const dataStringsUrl = configData.configPath(STRINGS_EP_NAME);
+
+  // Fetch quiz data
+  // Pass configPath(QUESTIONS_EP_NAME) and  configPath(STRINGS_EP_NAME) to the worker
+  worker.postMessage({questionsUrl, dataStringsUrl});
+
+  // Listen for messages from the worker
+  worker.onmessage = function(event) {
+    // Handle messages received from the worker
+    console.log('Received from worker:', event.data);
+    questions = event.data.questions;
+    dataStrings = event.data.dataStrings;
+    const qMap = {};
+    questions.questions.data.forEach((question) => {
+    qMap[question.questions] = question;
+    validQuestions.push(question.questions);
+    });
+
+    const strMap = {};
+    dataStrings.questions.data.forEach((question) => {
+    strMap[question.q] = question;
+    });
+
+    setUserFlow([questions.questions.data[0].questions]);
+
+    setStringData(dataStrings);
+    setQuestionData(questions);
+    setStringQList(strMap);
+    setQuestionList(qMap);
+    setDataLoaded(true);
+    document.body.classList.add('quiz-page');
+    el.replaceChildren();
+    render(html`<${App} 
+      initialIsDataLoaded=${initialIsDataLoaded} 
+      preQuestions=${preQuestions} 
+      initialStrings=${initialStrings}
+      shortQuiz=${updatedShortQuiz}
+      preselections=${preselections}
+      nextQuizViewsExist=${nextQuizViewsExist}
+    />`, el);
+  };
+
+  // Handle errors from the worker
+  worker.onerror = function(error) {
+    console.error('Error from worker:', error);
+    window.lana?.log(`ERROR: Fetching data for quiz flow ${ex}`);
+  };
+
 }
