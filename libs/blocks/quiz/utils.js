@@ -34,6 +34,18 @@ export const initConfigPathGlob = (rootElement) => {
   return { configPath, quizKey, analyticsType, analyticsQuiz, shortQuiz };
 };
 
+export const getQuizData = async () => {
+  try {
+    const [questions, dataStrings] = await Promise.all(
+      [fetchContentOfFile(QUESTIONS_EP_NAME), fetchContentOfFile(STRINGS_EP_NAME)],
+    );
+    return [questions, dataStrings];
+  } catch (ex) {
+    window.lana?.log(`ERROR: Fetching data for quiz flow ${ex}`);
+  }
+  return [];
+};
+
 export const getUrlParams = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const params = {};

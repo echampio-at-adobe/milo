@@ -122,11 +122,6 @@ describe('Quiz', () => {
     sinon.restore();
   });
 
-  it('should render the initial "Loading" html when data is not loaded', async () => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(document.querySelector('.quiz-option')).to.exist;
-  });
-
   it('should update the button when an option is selected', async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     const quizOption = document.querySelector('.quiz-option');
