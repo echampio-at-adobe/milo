@@ -28,7 +28,6 @@ const App = ({
   test = {},
   shortQuiz: isShortQuiz = false,
 }) => {
-  let questions = {};
   const preQuestions = {};
   const preselections = [];
   const [btnAnalytics, setBtnAnalytics] = useState(null);
@@ -48,7 +47,6 @@ const App = ({
     if (questionData && questionData.questions && questionData.questions.data.length > 0) {
       setUserFlow([questionData.questions.data[0].questions]);
     }
-    questions = questionData;
   }, [questionData]);
 
   useEffect(() => {
