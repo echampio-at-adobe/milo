@@ -25,8 +25,10 @@ export async function loadFragments(fragmentURL) {
 }
 
 const App = ({
+  test = {},
   shortQuiz: isShortQuiz = false,
 }) => {
+  let questions = {};
   const preQuestions = {};
   const preselections = [];
   const [btnAnalytics, setBtnAnalytics] = useState(null);
@@ -42,15 +44,11 @@ const App = ({
   const [userFlow, setUserFlow] = useState([]);
   const [debugBuild, setDebugBuild] = useState(null);
 
-  console.log(questionData);
-  console.log(questionList);
-  console.log(stringData);
-  console.log(stringQList);
-
   useEffect(() => {
     if (questionData && questionData.questions && questionData.questions.data.length > 0) {
       setUserFlow([questionData.questions.data[0].questions]);
     }
+    questions = questionData;
   }, [questionData]);
 
   useEffect(() => {
@@ -260,23 +258,23 @@ const App = ({
   };
 
   return html`<div class="quiz-container">
-                  ${selectedQuestion.questions && html`<${StepIndicator}
+                  ${selectedQuestion?.questions && html`<${StepIndicator}
                     currentStep=${currentStep} 
                     totalSteps=${totalSteps} 
                     prevStepIndicator=${prevStepIndicator}
                     top="${true}" />
                   `}
 
-                  ${selectedQuestion.questions && getStringValue('background') !== '' && html`<div class="quiz-background">
+                  ${selectedQuestion?.questions && getStringValue('background') !== '' && html`<div class="quiz-background">
                       ${DecorateBlockBackground(getStringValue)}
                   </div>`}
 
-                  ${selectedQuestion.questions && html`<${DecorateBlockForeground} 
+                  ${selectedQuestion?.questions && html`<${DecorateBlockForeground} 
                       heading=${getStringValue('heading')} 
                       subhead=${getStringValue('sub-head')} 
                       btnText=${getStringValue('btn')} />`}
                       
-                  ${selectedQuestion.questions && html`<${GetQuizOption} 
+                  ${selectedQuestion?.questions && html`<${GetQuizOption} 
                     btnText=${getStringValue('btn')} 
                     minSelections=${minSelections} 
                     maxSelections=${maxSelections} 
@@ -289,7 +287,7 @@ const App = ({
                     handleOnNextClick=${handleOnNextClick}
                     btnAnalyticsData=${btnAnalytics}/>`}
 
-                  ${selectedQuestion.questions && html`
+                  ${selectedQuestion?.questions && html`
                     <${StepIndicator} 
                       currentStep=${currentStep} 
                       totalSteps=${totalSteps} 
@@ -329,10 +327,6 @@ export default async function init(
       ({ questionData, questionList, stringData, stringQList } = event.data)
       dataLoaded = true;
       document.body.classList.add('quiz-page');
-      console.log(questionData);
-      console.log(questionList);
-      console.log(stringData);
-      console.log(stringQList);
       render(html`<${App} 
         shortQuiz=${updatedShortQuiz}
       />`, el);
